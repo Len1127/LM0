@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>光合叛变 · 夏日热浪版 | 人传人阳光游戏</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: linear-gradient(145deg, #0b3b2f 0%, #05201e 100%);
+            font-family: system-ui, 'Segoe UI', 'Poppins', 'Noto Sans', sans-serif;
+            margin: 0;
+            padding: 16px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        /* 夏日动态光晕背景 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient(circle at 20% 30%, rgba(255,200,100,0.15), transparent 60%);
+            z-index: 0;
+            animation: summerHaze 12s infinite alternate;
+        }
+        @keyframes summerHaze {
+            0% { opacity: 0.4; transform: scale(1);}
+            100% { opacity: 1; transform: scale(1.05); background-position: 30% 40%;}
+        }
+        .game-frame {
+            max-width: 580px;
+            width: 100%;
+            margin: 0 auto;
+            background: rgba(25, 45, 35, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 64px;
+            padding: 22px 20px 32px;
+            box-shadow: 0 30px 45px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,220,120,0.5);
+            border: 1px solid rgba(255,180,70,0.7);
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s;
+        }
+        /* 夏日阳光粒子装饰 */
+        .sun-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #ffd966, #ffb347);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: floatParticle 8s infinite ease-in-out;
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes floatParticle {
+            0% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0; }
+            20% { opacity: 0.8; }
+            80% { opacity: 0.6; }
+            100% { transform: translateY(-80px) translateX(40px) scale(0); opacity: 0; }
+        }
+        /* 季节标识 */
+        .season-badge {
+            position: absolute;
+            top: 18px;
+            right: 24px;
+            background: #ff7e33cc;
+            backdrop-filter: blur(4px);
+            padding: 4px 14px;
+            border-radius: 60px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #fff3c9;
+            letter-spacing: 1px;
+            box-shadow: 0 0 8px #ffad60;
+            z-index: 3;
+        }
+        .sun-header {
+            text-align: center;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .sun-icon {
+            font-size: 74px;
+            filter: drop-shadow(0 0 20px #ffaa44);
+            display: inline-block;
+            animation: sunSpin 8s infinite linear;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        @keyframes sunSpin {
+            0% { transform: rotate(0deg) scale(1); filter: drop-shadow(0 0 5px #ffb347);}
+            50% { transform: rotate(5deg) scale(1.05); filter: drop-shadow(0 0 25px #ffdd88);}
+            100% { transform: rotate(0deg) scale(1);}
+        }
+        .greeting {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 60px;
+            padding: 10px 18px;
+            font-size: 0.9rem;
+            color: #ffffbb;
+            margin: 12px 0;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+            border-left: 4px solid #ffbb55;
+        }
+        .stats-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            flex: 1;
+            background: #14261fe0;
+            border-radius: 42px;
+            padding: 12px 10px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,200,120,0.5);
+            transition: 0.1s;
+        }
+        .stat-label {
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            color: #caf0d8;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffdfa5, #ffbc6e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            line-height: 1;
+        }
+        .chain-progress {
+            background: #0f251f;
+            border-radius: 40px;
+            padding: 5px;
+            margin: 8px 0;
+        }
+        .chain-bar {
+            background: linear-gradient(90deg, #ffa54d, #ffee88);
+            width: 0%;
+            height: 14px;
+            border-radius: 40px;
+            transition: width 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            box-shadow: 0 0 6px #ffb347;
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin: 22px 0;
+        }
+        .btn {
+            flex: 1;
+            background: #2f4b3f;
+            border: none;
+            padding: 12px 0;
+            border-radius: 100px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #ffffe0;
+            box-shadow: 0 5px 0 #14261e;
+            transition: 0.05s linear;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #14261e;
+        }
+        .btn-primary {
+            background: #e67e22;
+            color: white;
+            box-shadow: 0 4px 0 #b35f1a;
+            text-shadow: 0 1px 0 #ac4e0a;
+        }
+        .btn-summer {
+            background: #ff9f4a;
+            color: #2c1a0c;
+        }
+        .code-area {
+            background: #0f2620d9;
+            border-radius: 60px;
+            padding: 12px 18px;
+            margin: 14px 0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .code-text {
+            background: #00000066;
+            padding: 8px 16px;
+            border-radius: 60px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #ffea9e;
+            flex: 1;
+            word-break: break-all;
+            letter-spacing: 1px;
+        }
+        .input-code {
+            flex: 2;
+            background: #1d342c;
+            border: 1px solid #ffc489;
+            border-radius: 60px;
+            padding: 10px 16px;
+            color: #fff2c9;
+            font-family: monospace;
+            outline: none;
+        }
+        .event-log {
+            background: #02100ed9;
+            border-radius: 32px;
+            padding: 14px;
+            font-size: 0.7rem;
+            color: #e2f0e0;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 18px;
+            border: 1px solid #ffbd6e55;
+        }
+        .leaderboard {
+            margin-top: 20px;
+            background: #19342ce6;
+            border-radius: 36px;
+            padding: 12px 16px;
+            backdrop-filter: blur(4px);
+        }
+        .leader-title {
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-left: 5px solid #ffb347;
+            padding-left: 14px;
+            color: #ffefb0;
+        }
+        .rank-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            padding: 6px 10px;
+            border-bottom: 1px dashed #ffb34740;
+        }
+        .badge {
+            background: #ffa34740;
+            border-radius: 40px;
+            padding: 2px 12px;
+            font-size: 0.65rem;
+        }
+        footer {
+            font-size: 0.62rem;
+            text-align: center;
+            margin-top: 20px;
+            color: #bbdbbd;
+        }
+        .watermelon-pop {
+            animation: bounce 0.4s ease;
+        }
+        @keyframes bounce {
+            0% { transform: scale(1);}
+            50% { transform: scale(1.1);}
+            100% { transform: scale(1);}
+        }
+    </style>
+</head>
+<body>
+<div class="game-frame" id="app">
+    <div class="season-badge">🍉 盛夏热浪 · 阳光疯长季</div>
+    <div class="sun-header">
+        <div class="sun-icon" id="sunEmoji">☀️🌈</div>
+        <div class="greeting" id="motdMsg">🌞 夏天就要把阳光传染给全世界！</div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">🌈 五彩阳光</div><div class="stat-number" id="mySun">0</div></div>
+        <div class="stat-card"><div class="stat-label">🍧 压力值</div><div class="stat-number stress-number" id="myStress" style="background:linear-gradient(135deg,#ffb48a,#ff8c5a);background-clip:text;">0</div></div>
+        <div class="stat-card"><div class="stat-label">🔗 光合链长</div><div class="stat-number" id="chainLen">0</div></div>
+    </div>
+
+    <div class="chain-progress"><div class="chain-bar" id="chainBar" style="width:0%"></div></div>
+
+    <div class="btn-group">
+        <button class="btn btn-primary" id="collectBtn">📸 收集夏日阳光</button>
+        <button class="btn btn-summer" id="relaxBtn">🍉 西瓜摸鱼(-35压力)</button>
+    </div>
+
+    <div class="code-area">
+        <span style="font-size:0.8rem;">✨ 我的盛夏阳光码 ✨</span>
+        <div class="code-text" id="myCode">RAY-夏至加载中</div>
+        <button class="btn" id="copyCodeBtn" style="flex:0.4; padding:6px 0;">📋 复制传染</button>
+    </div>
+    <div class="code-area">
+        <input type="text" id="importCodeInput" class="input-code" placeholder="🌞 粘贴好友的阳光码" autocomplete="off">
+        <button class="btn btn-primary" id="importBtn" style="flex:0.8;">🔥 被传染 · 光合感染</button>
+    </div>
+
+    <div class="event-log" id="eventLog">
+        🍉 盛夏事件簿：<br>✨ 欢迎来到光合叛变·夏日热浪版！阳光越传越烈，季节加成启动~
+    </div>
+
+    <div class="leaderboard">
+        <div class="leader-title">🏖️ 夏日阳光传播榜 (人传人热度)</div>
+        <div id="leaderList">- 正在凝结阳光 -</div>
+    </div>
+    <footer>
+        💡 夏季特典：阳光更绚烂，链上人数越多，阳光额外加成！<br>
+        🌊 人传人每传播一次，额外获得「夏日冰爽」减压效果。黑洞事件会有冰西瓜护体~
+    </footer>
+</div>
+
+<script>
+    // ------------------- 夏日·光合叛变 完整版 -------------------
+    let player = {
+        id: null,
+        sunlight: 188,
+        stress: 24,
+        chainId: null,
+        isShielded: false,
+        summerBoost: true,
+        lastCollectTime: 0
+    };
+
+    let chainsDB = new Map();
+    
+    function generateId() { return 'SUN' + Math.random().toString(36).substr(2, 6) + '_' + Date.now().toString(36); }
+
+    function resetNewPlayer() {
+        player.id = generateId();
+        player.sunlight = 188;
+        player.stress = 20;
+        player.chainId = player.id;
+        player.isShielded = false;
+        createNewChain(player.id);
+        savePlayer();
+    }
+
+    function createNewChain(leaderId) {
+        let newChain = {
+            chainId: leaderId,
+            leader: leaderId,
+            members: [leaderId],
+            totalSunGenerated: 0,
+            lastActive: Date.now(),
+            summerFruits: 0
+        };
+        chainsDB.set(leaderId, newChain);
+        saveChainsDB();
+    }
+
+    function savePlayer() {
+        let toStore = {
+            id: player.id,
+            sunlight: player.sunlight,
+            stress: player.stress,
+            chainId: player.chainId,
+            isShielded: player.isShielded
+        };
+        localStorage.setItem('PhotonRebelSummer', JSON.stringify(toStore));
+    }
+
+    function saveChainsDB() {
+        let obj = {};
+        for (let [k, v] of chainsDB.entries()) { obj[k] = v; }
+        localStorage.setItem('PhotonChainsSummer', JSON.stringify(obj));
+    }
+
+    function initGame() {
+        let stored = localStorage.getItem('PhotonRebelSummer');
+        if (stored) {
+            try {
+                let data = JSON.parse(stored);
+                player.id = data.id;
+                player.sunlight = data.sunlight ?? 188;
+                player.stress = data.stress ?? 24;
+                player.chainId = data.chainId;
+                player.isShielded = data.isShielded || false;
+                if (player.stress > 200) player.stress = 200;
+                if (player.sunlight < 0) player.sunlight = 0;
+            } catch(e) { resetNewPlayer(); }
+        } else { resetNewPlayer(); }
+        
+        let chainStorage = localStorage.getItem('PhotonChainsSummer');
+        if (chainStorage) {
+            try {
+                let parsed = JSON.parse(chainStorage);
+                chainsDB.clear();
+                for (let [k, v] of Object.entries(parsed)) chainsDB.set(k, v);
+            } catch(e) {}
+        }
+        if (player.chainId && !chainsDB.has(player.chainId)) {
+            player.chainId = player.id;
+            createNewChain(player.id);
+        } else if (!player.chainId) {
+            player.chainId = player.id;
+            createNewChain(player.id);
+        }
+        let myChain = chainsDB.get(player.chainId);
+        if (myChain && !myChain.members.includes(player.id)) {
+            myChain.members.push(player.id);
+            saveChainsDB();
+        }
+        updateUI();
+        startAutoStress();
+        startBlackHoleEvent();
+        startChainHeartbeat();
+        renderLeaderboard();
+        generateSunParticles();
+        renderEventLog("🍉 夏日版上线！阳光五彩斑斓，链式传播获得西瓜清凉buff~", false);
+    }
+
+    function updateUI() {
+        document.getElementById('mySun').innerText = Math.floor(player.sunlight);
+        document.getElementById('myStress').innerText = Math.floor(player.stress);
+        let chain = chainsDB.get(player.chainId);
+        let len = chain ? chain.members.length : 1;
+        document.getElementById('chainLen').innerText = len;
+        let stressPercent = (player.stress / 200) * 100;
+        let healthWidth = 100 - stressPercent;
+        document.getElementById('chainBar').style.width = `${healthWidth}%`;
+        let sunEmoji = document.getElementById('sunEmoji');
+        if (player.stress > 150) sunEmoji.innerHTML = '🌑🔥';
+        else if (len >= 5) sunEmoji.innerHTML = '🌈☀️🔥';
+        else if (player.sunlight > 500) sunEmoji.innerHTML = '🌟🌞✨';
+        else sunEmoji.innerHTML = '🌞🌈';
+        let msgDiv = document.getElementById('motdMsg');
+        let hour = new Date().getHours();
+        if (hour > 18) msgDiv.innerHTML = "🌙 夏夜凉风，但阳光依然在心里传染~";
+        else if (hour > 12) msgDiv.innerHTML = "🍉 午后烈日！传播阳光效率暴增！";
+        else msgDiv.innerHTML = "🌅 盛夏清晨，快用阳光码感染同事吧！";
+        document.getElementById('myCode').innerText = player.id;
+    }
+
+    function addSunlight(amount) {
+        let chain = chainsDB.get(player.chainId);
+        let chainBonus = 1;
+        if (chain && chain.members.length >= 3) chainBonus = 1 + Math.min(0.4, (chain.members.length-2)*0.05);
+        let finalGain = Math.floor(amount * chainBonus);
+        if (finalGain < 1) finalGain = amount;
+        player.sunlight += finalGain;
+        if (player.sunlight > 9999) player.sunlight = 9999;
+        savePlayer();
+        updateUI();
+        return finalGain;
+    }
+
+    function reduceStress(amount) {
+        let newStress = player.stress - amount;
+        player.stress = Math.min(200, Math.max(0, newStress));
+        savePlayer();
+        updateUI();
+        if (player.stress <= 0) renderEventLog("🎉 压力蒸发！夏天就是要无压摸鱼！", false);
+    }
+
+    function addStress(amount) {
+        if (player.isShielded) {
+            renderEventLog("🛡️ 摆烂冰西瓜护盾生效！本次压力全免~ 🍉", false);
+            player.isShielded = false;
+            savePlayer();
+            return;
+        }
+        player.stress = Math.min(200, player.stress + amount);
+        savePlayer();
+        updateUI();
+        if (player.stress >= 200) {
+            renderEventLog("💥 热浪中压力爆表！但冰爽西瓜护体，阳光保留，压力重置", true);
+            player.sunlight = Math.floor(player.sunlight * 0.85);
+            player.stress = 35;
+            player.isShielded = true;
+            savePlayer();
+            updateUI();
+        }
+    }
+
+    // 核心人传人 (被传染)
+    function infectByCode(code) {
+        if (!code || code === player.id) {
+            renderEventLog("🍉 不能自己传染自己呀！分享给其他打工人~", true);
+            return false;
+        }
+        let targetChainId = null;
+        for (let [cid, chain] of chainsDB.entries()) {
+            if (chain.members.includes(code)) { targetChainId = cid; break; }
+        }
+        if (!targetChainId) {
+            let newChainId = code;
+            let fakeChain = { chainId: newChainId, leader: code, members: [code], totalSunGenerated: 0, lastActive: Date.now() };
+            chainsDB.set(newChainId, fakeChain);
+            targetChainId = newChainId;
+            saveChainsDB();
+        }
+        let baseGain = Math.floor(Math.random() * 40) + 35;
+        let summerExtra = Math.floor(Math.random() * 20) + 10;
+        let totalGain = baseGain + summerExtra;
+        let finalGain = addSunlight(totalGain);
+        reduceStress(22);
+        renderEventLog(`🌞✨ 人传人烈日爆发！从「${code.slice(0,6)}」感染 +${finalGain} 五彩阳光，压力-22！`, false);
+        let myChainObj = chainsDB.get(player.chainId);
+        let theirChainObj = chainsDB.get(targetChainId);
+        if (myChainObj && theirChainObj && player.chainId !== targetChainId) {
+            renderEventLog(`⚡ 盛夏链式大合并！两条光合链交融，阳光爆炸增长！`, false);
+            for (let mem of theirChainObj.members) {
+                if (!myChainObj.members.includes(mem)) myChainObj.members.push(mem);
+            }
+            myChainObj.lastActive = Date.now();
+            chainsDB.set(player.chainId, myChainObj);
+            chainsDB.delete(targetChainId);
+            let bonus = Math.floor(Math.random() * 55) + 45;
+            addSunlight(bonus);
+            renderEventLog(`🍉 链合并阳光大礼包 +${bonus} 阳光！`, false);
+            saveChainsDB();
+        } else if (myChainObj) {
+            if (!myChainObj.members.includes(code)) myChainObj.members.push(code);
+            myChainObj.lastActive = Date.now();
+            saveChainsDB();
+        }
+        renderLeaderboard();
+        updateUI();
+        return true;
+    }
+
+    function doCollect() {
+        let hour = new Date().getHours();
+        let isDay = (hour >= 6 && hour <= 19);
+        let base = isDay ? Math.floor(Math.random() * 42) + 35 : Math.floor(Math.random() * 28) + 15;
+        let seasonBonus = Math.floor(Math.random() * 20) + 8;
+        let total = base + seasonBonus;
+        let final = addSunlight(total);
+        reduceStress(6);
+        renderEventLog(`📸☀️ 盛夏阳光采集！获得 ${final} 缕五彩光芒，压力-6`, false);
+        updateUI();
+        let chain = chainsDB.get(player.chainId);
+        if (chain) { chain.lastActive = Date.now(); saveChainsDB(); }
+        generateCollectAnimation();
+    }
+
+    function doRelax() {
+        let dec = Math.min(35, player.stress);
+        reduceStress(dec);
+        renderEventLog(`🍉 啃一口冰西瓜 + 摸鱼，压力 -${dec}！同事被西瓜香气感染~`, false);
+        if (Math.random() < 0.3) addSunlight(8);
+    }
+
+    // 黑洞事件 (夏日烧烤版)
+    function startBlackHoleEvent() {
+        setInterval(() => {
+            if (Math.random() < 0.45) return;
+            let chain = chainsDB.get(player.chainId);
+            if (!chain) return;
+            let required = 40 + chain.members.length * 2;
+            renderEventLog(`🌑🔥 酷暑黑洞突袭！需要 ${required} 阳光一起抵抗，否则热浪增压！`, true);
+            if (player.sunlight >= required) {
+                addSunlight(-required);
+                reduceStress(30);
+                renderEventLog(`🍦 抵抗成功！消耗 ${required} 阳光，全体压力-30，夏日续命！`, false);
+            } else {
+                addStress(50);
+                player.isShielded = true;
+                savePlayer();
+                renderEventLog(`💔 抵抗失败！压力+50，但获得了【冰镇护盾】下次黑洞无效`, true);
+                if (chain.members.length > 1) {
+                    chain.members = [player.id];
+                    chainsDB.set(player.chainId, chain);
+                    saveChainsDB();
+                    renderEventLog(`🔗 链因热浪断裂重组，重新用阳光码连接同伴吧！`, true);
+                }
+            }
+            updateUI();
+            renderLeaderboard();
+        }, 95000);
+    }
+
+    function startAutoStress() {
+        setInterval(() => {
+            let inc = Math.floor(Math.random() * 8) + 4;
+            let chain = chainsDB.get(player.chainId);
+            if (chain && chain.members.length > 2) inc = Math.max(2, inc - Math.floor(chain.members.length/3));
+            addStress(inc);
+            if (inc > 5) renderEventLog(`🌡️ 夏日职场燥热 +${inc} 压力，快传播阳光解暑！`, false);
+        }, 52000);
+    }
+
+    function startChainHeartbeat() {
+        setInterval(() => {
+            let chain = chainsDB.get(player.chainId);
+            if (chain && chain.members.length >= 2 && (Date.now() - chain.lastActive) < 7200000) {
+                if (Math.random() < 0.25) {
+                    addSunlight(12);
+                    renderEventLog(`🌈 链上光合作用 +12 阳光，夏日团队加成！`, false);
+                }
+            }
+            renderLeaderboard();
+        }, 45000);
+    }
+
+    function renderLeaderboard() {
+        let container = document.getElementById('leaderList');
+        let all = Array.from(chainsDB.values());
+        all.sort((a,b)=>b.members.length - a.members.length);
+        let top = all.slice(0,5);
+        if (top.length === 0) { container.innerHTML = '<div>暂无链，分享阳光码吧~</div>'; return; }
+        let html = '';
+        for(let i=0;i<top.length;i++){
+            let c = top[i];
+            let isMine = c.chainId === player.chainId;
+            html += `<div class="rank-item"><span>${i+1}. ${c.chainId.slice(0,7)}${isMine?' 🌟我的链':''}</span><span class="badge">☀️${c.members.length}人</span></div>`;
+        }
+        container.innerHTML = html;
+    }
+
+    function renderEventLog(msg, isError) {
+        let logDiv = document.getElementById('eventLog');
+        let prefix = isError ? "⚠️ " : "✨ ";
+        let time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+        logDiv.innerHTML = `[${time}] ${prefix}${msg}<br>` + logDiv.innerHTML;
+        if(logDiv.children.length > 13) logDiv.lastChild?.remove();
+    }
+
+    function generateSunParticles() {
+        setInterval(() => {
+            let container = document.body;
+            let particle = document.createElement('div');
+            particle.className = 'sun-particle';
+            let size = Math.random() * 12 + 4;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 90 + '%';
+            particle.style.bottom = '-10px';
+            particle.style.animationDuration = Math.random() * 5 + 4 + 's';
+            container.appendChild(particle);
+            setTimeout(() => { if(particle) particle.remove(); }, 5000);
+        }, 1800);
+    }
+
+    function generateCollectAnimation() {
+        let icon = document.getElementById('sunEmoji');
+        icon.style.transform = 'scale(1.3)';
+        setTimeout(() => { icon.style.transform = ''; }, 200);
+    }
+
+    document.getElementById('copyCodeBtn')?.addEventListener('click', () => {
+        let code = document.getElementById('myCode').innerText;
+        navigator.clipboard.writeText(code).then(() => renderEventLog("📋 阳光码已复制，快让同事被感染~", false));
+    });
+    document.getElementById('importBtn')?.addEventListener('click', () => {
+        let inp = document.getElementById('importCodeInput').value.trim();
+        if(!inp) return renderEventLog("输入好友的阳光码!", true);
+        infectByCode(inp);
+        document.getElementById('importCodeInput').value = '';
+    });
+    document.getElementById('collectBtn')?.addEventListener('click', () => doCollect());
+    document.getElementById('relaxBtn')?.addEventListener('click', () => doRelax());
+
+    initGame();
+</script>
+</body>
+</html>
