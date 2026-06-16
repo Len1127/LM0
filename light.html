@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>光合叛变 · 人传人阳光游戏 | 打工人解压链</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: linear-gradient(145deg, #1f2f2a 0%, #0e1a1a 100%);
+            font-family: system-ui, 'Segoe UI', 'Poppins', 'Noto Sans', sans-serif;
+            margin: 0;
+            padding: 16px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        /* 主面板 */
+        .game-frame {
+            max-width: 550px;
+            width: 100%;
+            margin: 0 auto;
+            background: rgba(25, 35, 30, 0.75);
+            backdrop-filter: blur(8px);
+            border-radius: 56px;
+            padding: 20px 18px 28px;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,215,150,0.25);
+            border: 1px solid rgba(255,200,100,0.4);
+        }
+        /* 头部太阳 */
+        .sun-header {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .sun-icon {
+            font-size: 64px;
+            filter: drop-shadow(0 0 10px #ffb347);
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+            100% { transform: translateY(0px); }
+        }
+        .greeting {
+            background: #2d2a1eaa;
+            border-radius: 60px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            color: #ffefb9;
+            margin: 8px 0;
+            font-weight: 500;
+        }
+        /* 核心数据栏 */
+        .stats-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 18px 0;
+        }
+        .stat-card {
+            flex: 1;
+            background: #1e2a24cc;
+            border-radius: 32px;
+            padding: 10px 12px;
+            text-align: center;
+            backdrop-filter: blur(2px);
+        }
+        .stat-label {
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            color: #cddde0;
+        }
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffdfa5;
+            line-height: 1;
+        }
+        .stress-number { color: #ffa270; }
+        /* 进度条 */
+        .chain-progress {
+            background: #0f1919;
+            border-radius: 40px;
+            padding: 4px;
+            margin: 6px 0 4px;
+        }
+        .chain-bar {
+            background: #f7b05e;
+            width: 0%;
+            height: 12px;
+            border-radius: 40px;
+            transition: width 0.25s;
+        }
+        /* 按钮 */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .btn {
+            flex: 1;
+            background: #2f423b;
+            border: none;
+            padding: 12px 0;
+            border-radius: 100px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #fff3cf;
+            box-shadow: 0 4px 0 #17211e;
+            transition: 0.05s linear;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #17211e;
+        }
+        .btn-primary {
+            background: #e67e22;
+            color: white;
+            box-shadow: 0 4px 0 #a34f12;
+        }
+        .btn-warning {
+            background: #4f3a2a;
+        }
+        .code-area {
+            background: #0f1715d9;
+            border-radius: 48px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .code-text {
+            background: #00000055;
+            padding: 8px 14px;
+            border-radius: 40px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #ffda88;
+            flex: 1;
+            word-break: break-all;
+        }
+        .input-code {
+            flex: 2;
+            background: #2b2c1e;
+            border: 1px solid #ffcf7a;
+            border-radius: 60px;
+            padding: 8px 14px;
+            color: #ffecb3;
+            font-family: monospace;
+            outline: none;
+        }
+        .event-log {
+            background: #00000066;
+            border-radius: 28px;
+            padding: 12px;
+            font-size: 0.7rem;
+            color: #cfe6cf;
+            max-height: 140px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        .leaderboard {
+            margin-top: 18px;
+            background: #1f2d28aa;
+            border-radius: 32px;
+            padding: 10px 12px;
+        }
+        .leader-title {
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            border-left: 4px solid #ffb347;
+            padding-left: 12px;
+        }
+        .rank-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            padding: 4px 8px;
+        }
+        .badge {
+            background: #f5a62330;
+            border-radius: 40px;
+            padding: 2px 8px;
+            font-size: 0.6rem;
+        }
+        hr {
+            border-color: #688b6e55;
+        }
+        footer {
+            font-size: 0.6rem;
+            text-align: center;
+            margin-top: 16px;
+            color: #9bb89b;
+        }
+    </style>
+</head>
+<body>
+<div class="game-frame" id="app">
+    <div class="sun-header">
+        <div class="sun-icon" id="sunEmoji">🌱📸</div>
+        <div class="greeting" id="motdMsg">🌞 打工人，今天散播阳光了吗？</div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">☀️ 我的阳光</div><div class="stat-number" id="mySun">0</div></div>
+        <div class="stat-card"><div class="stat-label">💢 压力值</div><div class="stat-number stress-number" id="myStress">0</div></div>
+        <div class="stat-card"><div class="stat-label">🔗 传播链长</div><div class="stat-number" id="chainLen">0</div></div>
+    </div>
+
+    <div class="chain-progress"><div class="chain-bar" id="chainBar" style="width:0%"></div></div>
+
+    <div class="btn-group">
+        <button class="btn btn-primary" id="collectBtn">📸 拍照收集阳光</button>
+        <button class="btn" id="relaxBtn">🍃 摸鱼解压(-30压力)</button>
+    </div>
+
+    <!-- 人传人核心 -->
+    <div class="code-area">
+        <span style="font-size:0.8rem;">✨ 我的阳光码 ✨</span>
+        <div class="code-text" id="myCode">RAY-加载中</div>
+        <button class="btn" id="copyCodeBtn" style="flex:0.4; padding:6px 0;">📋 复制</button>
+    </div>
+    <div class="code-area">
+        <input type="text" id="importCodeInput" class="input-code" placeholder="粘贴好友的阳光码" autocomplete="off">
+        <button class="btn btn-primary" id="importBtn" style="flex:0.8;">🌞 被传染·获取阳光</button>
+    </div>
+
+    <!-- 黑洞事件区域 -->
+    <div class="event-log" id="eventLog">
+        🌀 事件记录：<br>✨ 欢迎来到光合叛变！传播阳光，链上所有人都有收益。
+    </div>
+
+    <!-- 阳光榜 (模拟链上排名) -->
+    <div class="leaderboard">
+        <div class="leader-title">🏆 今日阳光传播榜 (人传人热度)</div>
+        <div id="leaderList">- 暂无数据，传播后出现 -</div>
+    </div>
+    <footer>
+        💡 链式反应：你的阳光码每被别人使用一次，你们双方都获得阳光+减压！<br>
+        🌑 黑洞反扑事件：随机触发，链上共同抵抗；失败也会获得「摆烂护盾」。
+    </footer>
+</div>
+
+<script>
+    // ---------- 游戏数据结构 ----------
+    // 玩家自身数据
+    let player = {
+        id: null,               // 唯一ID (存储于localStorage)
+        sunlight: 120,         // 阳光碎片
+        stress: 28,            // 压力 0-200
+        chainId: null,         // 当前所属传播链ID (链主ID)
+        isShielded: false,     // 摆烂护盾
+        lastEventTime: Date.now()
+    };
+
+    // 全局链数据存储: key = chainId (主节点ID) , value = 链对象
+    // 链结构 { members: [playerId1, playerId2...], totalSunContribution: xxx, lastActiveTime }
+    let chainsDB = new Map();   // key: chainId(string), value: chainObj
+
+    // 为了模拟多用户场景，我们使用 localStorage 存储 "所有节点" + 当前玩家
+    // 但为了真正实现人传人测试，需模拟链上其他成员 (通过导入码自动生成虚拟用户或加入真实)
+    // 设计理念：每个阳光码本质上 = 邀请者的playerId + 链Id?  简化：阳光码 = playerId (代表邀请人)
+    // 被传染时：如果扫码者未加入任何链，则加入邀请者的链；如果已有链，则仅仅获取阳光奖励但不改链(减少滥用)
+    // 同时每次传播，双方获得阳光，链条总长度增加凝聚力，减少压力。
+
+    // 辅助函数：生成随机ID
+    function generateId() {
+        return 'RAY_' + Math.random().toString(36).substr(2, 8) + '_' + Date.now().toString(36);
+    }
+
+    // 初始化或加载本地数据
+    function initGame() {
+        let stored = localStorage.getItem('PhotonRebel');
+        if (stored) {
+            try {
+                let data = JSON.parse(stored);
+                player.id = data.id;
+                player.sunlight = data.sunlight ?? 120;
+                player.stress = data.stress ?? 28;
+                player.chainId = data.chainId;
+                player.isShielded = data.isShielded || false;
+                // 确保stress范围
+                if (player.stress > 200) player.stress = 200;
+                if (player.stress < 0) player.stress = 0;
+                if (player.sunlight < 0) player.sunlight = 0;
+            } catch(e) { console.warn(e); resetNewPlayer(); }
+        } else {
+            resetNewPlayer();
+        }
+        // 加载链数据库 (全局链存储)
+        let chainStorage = localStorage.getItem('PhotonChains');
+        if (chainStorage) {
+            try {
+                let parsed = JSON.parse(chainStorage);
+                chainsDB.clear();
+                for (let [k, v] of Object.entries(parsed)) {
+                    chainsDB.set(k, v);
+                }
+            } catch(e) { console.warn(e); }
+        }
+        // 确保当前玩家所属链存在，如果链丢失则创建新链
+        if (player.chainId && !chainsDB.has(player.chainId)) {
+            // 链被清除，让玩家成为新链主
+            player.chainId = player.id;
+            createNewChain(player.id);
+        } else if (!player.chainId) {
+            player.chainId = player.id;
+            createNewChain(player.id);
+        }
+        // 同步链成员列表确保包含自己
+        let myChain = chainsDB.get(player.chainId);
+        if (myChain && !myChain.members.includes(player.id)) {
+            myChain.members.push(player.id);
+            chainsDB.set(player.chainId, myChain);
+            saveChainsDB();
+        }
+        updateUI();
+        startAutoStress();
+        startBlackHoleEvent();   // 黑洞事件计时器
+        startChainHeartbeat();   // 链活跃心跳 + 传播更新
+        renderLeaderboard();
+        renderEventLog("🌟 游戏启动，你的阳光码已经生成！分享给同事，一起光合叛变~", false);
+    }
+
+    function resetNewPlayer() {
+        player.id = generateId();
+        player.sunlight = 100;
+        player.stress = 22;
+        player.chainId = player.id;
+        player.isShielded = false;
+        createNewChain(player.id);
+        savePlayer();
+    }
+
+    function createNewChain(leaderId) {
+        let newChain = {
+            chainId: leaderId,
+            leader: leaderId,
+            members: [leaderId],
+            totalSunGenerated: 0,
+            lastActive: Date.now(),
+            chainLengthBonus: 1   // 链长度增益系数
+        };
+        chainsDB.set(leaderId, newChain);
+        saveChainsDB();
+    }
+
+    // 保存当前玩家
+    function savePlayer() {
+        let toStore = {
+            id: player.id,
+            sunlight: player.sunlight,
+            stress: player.stress,
+            chainId: player.chainId,
+            isShielded: player.isShielded
+        };
+        localStorage.setItem('PhotonRebel', JSON.stringify(toStore));
+    }
+
+    function saveChainsDB() {
+        let obj = {};
+        for (let [k, v] of chainsDB.entries()) {
+            obj[k] = v;
+        }
+        localStorage.setItem('PhotonChains', JSON.stringify(obj));
+    }
+
+    // 更新界面
+    function updateUI() {
+        document.getElementById('mySun').innerText = Math.floor(player.sunlight);
+        document.getElementById('myStress').innerText = Math.floor(player.stress);
+        let chainObj = chainsDB.get(player.chainId);
+        let chainLen = chainObj ? chainObj.members.length : 1;
+        document.getElementById('chainLen').innerText = chainLen;
+        let percent = (player.stress / 200) * 100;
+        document.getElementById('chainBar').style.width = (100 - percent) + "%";
+        document.getElementById('chainBar').style.backgroundColor = "#f7b05e";
+        // 阳光码展示
+        document.getElementById('myCode').innerText = player.id;
+        // 根据压力改变太阳表情
+        let sunEmojiSpan = document.getElementById('sunEmoji');
+        if (player.stress > 150) sunEmojiSpan.innerText = "🌑💢";
+        else if (player.stress > 80) sunEmojiSpan.innerText = "🌤️😫";
+        else if (player.chainId && chainsDB.get(player.chainId)?.members.length >= 3) sunEmojiSpan.innerText = "😎☀️🔥";
+        else sunEmojiSpan.innerText = "🌱📸";
+        // 随机一句话
+        let msg = document.getElementById('motdMsg');
+        if(chainObj && chainObj.members.length >=5) msg.innerText = "🎉 人传人爆发！你们的工位正在长向日葵！";
+        else if(player.stress < 30) msg.innerText = "✨ 心情不错！快分享阳光码传染快乐~";
+        else msg.innerText = "🌞 传播阳光，压力就会消散！";
+    }
+
+    // 增加阳光、减少压力辅助
+    function addSunlight(amount) {
+        player.sunlight += amount;
+        if (player.sunlight < 0) player.sunlight = 0;
+        if (player.sunlight > 9999) player.sunlight = 9999;
+        savePlayer();
+        updateUI();
+    }
+
+    function reduceStress(amount) {
+        let newStress = player.stress - amount;
+        player.stress = Math.min(200, Math.max(0, newStress));
+        savePlayer();
+        updateUI();
+        if (player.stress <= 0) renderEventLog("🎉 压力归零！今天属于夕阳与晚风~", false);
+        return true;
+    }
+
+    function addStress(amount) {
+        if (player.isShielded && amount > 0) {
+            renderEventLog("🛡️ 摆烂护盾生效！本次压力增加被抵消！", false);
+            player.isShielded = false;
+            savePlayer();
+            return;
+        }
+        player.stress = Math.min(200, player.stress + amount);
+        savePlayer();
+        updateUI();
+        if (player.stress >= 200) {
+            renderEventLog("💥 压力爆表！黑洞吞噬！触发摆烂重置，获得护盾但损失20%阳光", true);
+            // 游戏over重置机制：阳光保留80%，压力重置到40，并给予护盾
+            player.sunlight = Math.floor(player.sunlight * 0.8);
+            player.stress = 40;
+            player.isShielded = true;
+            savePlayer();
+            updateUI();
+        }
+    }
+
+    // 核心：人传人操作 (被传染)
+    function infectByCode(code) {
+        if (!code || code === player.id) {
+            renderEventLog("⚠️ 不能使用自己的阳光码，换个同事的吧！", true);
+            return false;
+        }
+        // 查找code对应的玩家是否在数据库中存在链？我们需要一个“全局用户索引”
+        let userChainLeader = null;
+        // 遍历所有链查找该code是否属于某个链成员，优先认为code是某个成员ID
+        for (let [chainId, chain] of chainsDB.entries()) {
+            if (chain.members.includes(code)) {
+                userChainLeader = chainId;
+                break;
+            }
+        }
+        if (!userChainLeader) {
+            // 假如完全找不到，则新建一个虚拟链主代表那个玩家 (模拟离线用户)
+            let newChainId = code;
+            let newChain = { chainId: newChainId, leader: code, members: [code], totalSunGenerated: 0, lastActive: Date.now() };
+            chainsDB.set(newChainId, newChain);
+            userChainLeader = newChainId;
+            saveChainsDB();
+        }
+        // 奖励阳光双人增益: 双方各得20~40阳光，压力减少15
+        let gain = Math.floor(Math.random() * 25) + 20;
+        addSunlight(gain);
+        reduceStress(15);
+        renderEventLog(`🌞 人传人成功！你从「${code.slice(0,8)}」感染阳光 +${gain}，压力-15！`, false);
+        // 同时增加被传染者链的活跃度 : 如果玩家当前链和对方链不同，可选择加入对方链? 按照羊了个羊病毒式，可以合并链
+        let myChainObj = chainsDB.get(player.chainId);
+        let targetChainObj = chainsDB.get(userChainLeader);
+        if (myChainObj && targetChainObj && player.chainId !== userChainLeader) {
+            // 链合并 (人传人爆发合并阵营)
+            renderEventLog(`⚡ 链式反应！你的「${player.chainId.slice(0,6)}」与「${userChainLeader.slice(0,6)}」合并，人传人扩大！`, false);
+            // 合并members
+            for (let mem of targetChainObj.members) {
+                if (!myChainObj.members.includes(mem)) myChainObj.members.push(mem);
+            }
+            myChainObj.lastActive = Date.now();
+            chainsDB.set(player.chainId, myChainObj);
+            // 删除旧链
+            chainsDB.delete(userChainLeader);
+            // 所有成员的chainId需要更新? 但其他玩家本地存储不会自动改，下次他们同步时会处理。为了模拟，保留。
+            saveChainsDB();
+            // 额外奖励合并红利：全体链成员增加阳光虚拟表现(当前玩家再加20)
+            addSunlight(20);
+            renderEventLog("🎁 链合并奖励 +20阳光，全员凝聚力上升！", false);
+        } else {
+            // 同链传播，增加链活跃
+            if (myChainObj) {
+                myChainObj.lastActive = Date.now();
+                if (!myChainObj.members.includes(code)) myChainObj.members.push(code); // 将传染源加进来
+                saveChainsDB();
+            }
+        }
+        // 更新排行榜
+        renderLeaderboard();
+        updateUI();
+        return true;
+    }
+
+    // 收集阳光主动操作
+    function doCollect() {
+        let hour = new Date().getHours();
+        let gain = (hour >= 7 && hour <= 18) ? Math.floor(Math.random() * 28) + 22 : Math.floor(Math.random() * 18) + 8;
+        addSunlight(gain);
+        reduceStress(4);
+        renderEventLog(`📸 拍下真实阳光 +${gain}阳光，压力微降~`, false);
+        updateUI();
+        // 传播链活跃
+        let chain = chainsDB.get(player.chainId);
+        if (chain) { chain.lastActive = Date.now(); saveChainsDB(); }
+    }
+
+    function doRelax() {
+        if (player.stress <= 0) {
+            renderEventLog("已经零压力了，快去传染阳光吧！", true);
+            return;
+        }
+        let dec = Math.min(30, player.stress);
+        reduceStress(dec);
+        renderEventLog(`🍃 摸鱼解压 -${dec} 压力，老板暂时没发现`, false);
+    }
+
+    // 黑洞事件: 随机触发，链上共同抵抗
+    let blackHoleInterval;
+    function startBlackHoleEvent() {
+        if (blackHoleInterval) clearInterval(blackHoleInterval);
+        blackHoleInterval = setInterval(() => {
+            // 每 90~150 秒触发一次黑洞事件
+            if (Math.random() < 0.35) return;
+            let chain = chainsDB.get(player.chainId);
+            if (!chain) return;
+            let chainLen = chain.members.length;
+            let requiredSun = 30 + chainLen * 2;
+            renderEventLog(`🌑⚠️ 黑洞反扑事件！需要消耗 ${requiredSun} 阳光共同抵御，否则链断裂+压力暴增！`, true);
+            // 模拟抵抗机制：玩家可以选择是否支付，提供两个选项交互会比较复杂，我们设计自动检测阳光是否足够，
+            // 如果阳光>requiredSun则自动抵抗成功，否则失败获得护盾
+            if (player.sunlight >= requiredSun) {
+                addSunlight(-requiredSun);
+                reduceStress(25);
+                renderEventLog(`✨ 抵抗成功！消耗 ${requiredSun} 阳光，压力-25，链更加坚固！`, false);
+                // 链成员全体增益模拟
+                chain.lastActive = Date.now();
+                saveChainsDB();
+            } else {
+                // 抵抗失败 -> 压力增加 + 断裂，但获得摆烂护盾
+                addStress(45);
+                player.isShielded = true;
+                savePlayer();
+                renderEventLog(`💀 抵抗失败！压力+45，链断裂但获得【摆烂护盾】下次免疫伤害`, true);
+                // 链断裂惩罚: 链长减半(保留至少1)
+                if (chain.members.length > 1) {
+                    let newMembers = [player.id];
+                    chain.members = newMembers;
+                    chain.lastActive = Date.now();
+                    chainsDB.set(player.chainId, chain);
+                    saveChainsDB();
+                    renderEventLog(`🔗 链条断裂重组，只剩你自己了... 快重新传播！`, true);
+                }
+            }
+            updateUI();
+            renderLeaderboard();
+        }, 100000); // 100秒
+    }
+
+    // 自动压力增长 (每55秒)
+    let autoStressTimer;
+    function startAutoStress() {
+        if (autoStressTimer) clearInterval(autoStressTimer);
+        autoStressTimer = setInterval(() => {
+            let inc = Math.floor(Math.random() * 7) + 3;
+            // 链长越长，压力增加略微减少（团队抵消）
+            let chain = chainsDB.get(player.chainId);
+            if (chain && chain.members.length > 2) inc = Math.max(1, inc - Math.floor(chain.members.length/4));
+            addStress(inc);
+            let msg = inc > 0 ? `📈 工作琐事压力 +${inc}` : null;
+            if (msg && inc > 3) renderEventLog(msg, false);
+            updateUI();
+        }, 55000);
+    }
+
+    function renderLeaderboard() {
+        let container = document.getElementById('leaderList');
+        let allChains = Array.from(chainsDB.values());
+        allChains.sort((a,b)=>b.members.length - a.members.length);
+        let top5 = allChains.slice(0,5);
+        if (top5.length === 0) {
+            container.innerHTML = '<div class="rank-item">暂无传播链，快去分享阳光码</div>';
+            return;
+        }
+        let html = '';
+        for (let i=0; i<top5.length; i++) {
+            let c = top5[i];
+            let isMine = (c.chainId === player.chainId);
+            html += `<div class="rank-item"><span>${i+1}. ${c.chainId.slice(0,8)}${isMine?' (我的链)':''}</span><span class="badge">🔥${c.members.length}人</span></div>`;
+        }
+        container.innerHTML = html;
+    }
+
+    function renderEventLog(msg, isError) {
+        let logDiv = document.getElementById('eventLog');
+        let prefix = isError ? "⚠️ " : "✨ ";
+        let time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+        logDiv.innerHTML = `[${time}] ${prefix}${msg}<br>` + logDiv.innerHTML;
+        if (logDiv.children.length > 12) {
+            let last = logDiv.lastChild;
+            if(last) last.remove();
+        }
+    }
+
+    function startChainHeartbeat() {
+        setInterval(() => {
+            let chain = chainsDB.get(player.chainId);
+            if (chain) {
+                let len = chain.members.length;
+                if (len >= 3 && (Date.now() - chain.lastActive) < 3600000) {
+                    // 活跃链礼包
+                    if (Math.random() < 0.2) {
+                        addSunlight(8);
+                        renderEventLog("🌈 链上活跃奖励：光合波动 +8阳光", false);
+                    }
+                }
+            }
+            renderLeaderboard();
+        }, 47000);
+    }
+
+    // 复制功能
+    document.getElementById('copyCodeBtn')?.addEventListener('click', () => {
+        let code = document.getElementById('myCode').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+            renderEventLog("📋 阳光码已复制，分享给同事让他们被传染吧！", false);
+        }).catch(()=> alert("手动复制吧:"+code));
+    });
+
+    document.getElementById('importBtn')?.addEventListener('click', () => {
+        let codeInput = document.getElementById('importCodeInput').value.trim();
+        if (!codeInput) { renderEventLog("请输入好友的阳光码", true); return; }
+        infectByCode(codeInput);
+        document.getElementById('importCodeInput').value = '';
+        savePlayer();
+        updateUI();
+        renderLeaderboard();
+    });
+    document.getElementById('collectBtn')?.addEventListener('click', () => { doCollect(); savePlayer(); renderLeaderboard(); });
+    document.getElementById('relaxBtn')?.addEventListener('click', () => { doRelax(); savePlayer(); updateUI(); });
+
+    // 启动
+    initGame();
+</script>
+</body>
+</html>
